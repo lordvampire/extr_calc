@@ -1,8 +1,8 @@
-var Complexities = require('../models/Complexities');
+var Complexity = require('../models/Complexities');
 
-Complexities.list = () => {
+Complexity.list = () => {
   return new Promise((resolve, reject) => {
-    Complexities.find((err, types) => {
+    Complexity.find((err, types) => {
       if (err) {
         reject(err);
       } else {
@@ -12,4 +12,43 @@ Complexities.list = () => {
   });
 };
 
-module.exports = Complexities;
+Complexity.create = (newComplexity) => {
+  let complexity = new Complexity({...newComplexity});
+  return new Promise((resolve, reject) => {
+    complexity.save((err, complexity) => {
+      if (err) reject(err);
+      else resolve(complexity);
+    });
+  })
+};
+
+Complexity.update = (name, newComplexity) => {
+  return new Promise((resolve, reject) => {
+    Complexity.findOne({name: name}, (err, complexity) => {
+      if(err) {
+          reject(err);
+      }
+      complexity.name = newComplexity.name;
+      complexity.extru = newComplexity.extru;
+
+      complexity.save((err, complexity) => {
+          if(err) {
+              reject(err);
+          } else {
+              resolve(complexity);
+          }
+      });
+    });
+  })
+};
+
+Complexity.delete = (name) => {
+  return new Promise((resolve, reject) => {
+    Complexity.findOneAndRemove({name: name}, (err, complexity) => {
+      if (err) reject(err);
+      else resolve(complexity);
+    })
+  })
+};
+
+module.exports = Complexity;

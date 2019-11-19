@@ -52,7 +52,6 @@ export const get = (url) => {
     axios.get(url)
         .then(res => {
             const data = res.data;
-            console.log(data)
             return data;
         })
 }

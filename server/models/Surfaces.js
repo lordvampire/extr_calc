@@ -2,10 +2,9 @@
 
 const mongoose = require("mongoose");
 
-const TableSurfacesSchema = new mongoose.Schema({
-  _id: String,
+const TableSufacesSchema = new mongoose.Schema({
   name: String,
   extru: Number
 });
 
-module.exports = mongoose.model("table_surface", TableSurfacesSchema);
+module.exports = mongoose.model("table_suface", TableSufacesSchema);
