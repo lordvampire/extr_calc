@@ -37,40 +37,17 @@ export default class Alloy extends React.Component {
 
     render() {
         return (
-            <MaterialTable
-                title="ALLOY TABLE"
-                columns={this.state.columns}
-                data={this.state.data}
-                editable={{
-                    onRowAdd: newData =>
-                        new Promise(resolve => {
-                            setTimeout(() => {
-                            resolve();
-                            axios.post(CREATE_ALLOY_URL, newData)
-                            .then(res => {
-                                const dat = res.data;
-                                if (dat) {
-                                    if (dat.success) {
-                                        console.log('success');
-                                        this.setState(prevState => {
-                                            const data = [...prevState.data];
-                                            data.push(newData);
-                                            return { ...prevState, data };
-                                        });
-                                    } else {
-                                        console.log('failure');
-                                    }
-                                }
-                            })
-                        }, 600);
-                    }),
-                    onRowUpdate: (newData, oldData) =>
-                        new Promise(resolve => {
-                            setTimeout(() => {
-                            resolve();
-                            if (oldData) {
-                                
-                                axios.put(sprintf.vsprintf(UPDATE_ALLOY_URL, [oldData.name]), newData)
+            <div className="animated fadeIn">
+                <MaterialTable
+                    title="ALLOY TABLE"
+                    columns={this.state.columns}
+                    data={this.state.data}
+                    editable={{
+                        onRowAdd: newData =>
+                            new Promise(resolve => {
+                                setTimeout(() => {
+                                resolve();
+                                axios.post(CREATE_ALLOY_URL, newData)
                                 .then(res => {
                                     const dat = res.data;
                                     if (dat) {
@@ -78,7 +55,7 @@ export default class Alloy extends React.Component {
                                             console.log('success');
                                             this.setState(prevState => {
                                                 const data = [...prevState.data];
-                                                data[data.indexOf(oldData)] = newData;
+                                                data.push(newData);
                                                 return { ...prevState, data };
                                             });
                                         } else {
@@ -86,34 +63,59 @@ export default class Alloy extends React.Component {
                                         }
                                     }
                                 })
-                            }
-                        }, 600);
-                    }),
-                    onRowDelete: oldData =>
-                        new Promise(resolve => {
-                            setTimeout(() => {
-                            resolve();
-                            this.setState(prevState => {
-                                const data = [...prevState.data];
-                                data.splice(data.indexOf(oldData), 1);
-                                return { ...prevState, data };
-                            });
-                            
-                            axios.delete(sprintf.vsprintf(DELETE_ALLOY_URL, [oldData.name]))
-                            .then(res => {
-                                const dat = res.data;
-                                if (dat) {
-                                    if (dat.success) {
-                                        console.log('success');
-                                    } else {
-                                        console.log('failure');
-                                    }
+                            }, 600);
+                        }),
+                        onRowUpdate: (newData, oldData) =>
+                            new Promise(resolve => {
+                                setTimeout(() => {
+                                resolve();
+                                if (oldData) {
+                                    
+                                    axios.put(sprintf.vsprintf(UPDATE_ALLOY_URL, [oldData.name]), newData)
+                                    .then(res => {
+                                        const dat = res.data;
+                                        if (dat) {
+                                            if (dat.success) {
+                                                console.log('success');
+                                                this.setState(prevState => {
+                                                    const data = [...prevState.data];
+                                                    data[data.indexOf(oldData)] = newData;
+                                                    return { ...prevState, data };
+                                                });
+                                            } else {
+                                                console.log('failure');
+                                            }
+                                        }
+                                    })
                                 }
-                            })
-                        }, 600);
-                    }),
-                }}
-            />
+                            }, 600);
+                        }),
+                        onRowDelete: oldData =>
+                            new Promise(resolve => {
+                                setTimeout(() => {
+                                resolve();
+                                this.setState(prevState => {
+                                    const data = [...prevState.data];
+                                    data.splice(data.indexOf(oldData), 1);
+                                    return { ...prevState, data };
+                                });
+                                
+                                axios.delete(sprintf.vsprintf(DELETE_ALLOY_URL, [oldData.name]))
+                                .then(res => {
+                                    const dat = res.data;
+                                    if (dat) {
+                                        if (dat.success) {
+                                            console.log('success');
+                                        } else {
+                                            console.log('failure');
+                                        }
+                                    }
+                                })
+                            }, 600);
+                        }),
+                    }}
+                />
+            </div>
         );
     }
 }

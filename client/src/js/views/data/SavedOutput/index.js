@@ -61,7 +61,6 @@ export default class SavedOutput extends React.Component {
                 if (data) {
                     if (data.success) {
                         this.setState({date_list: data.data.outputs})
-                        console.log(data.data.outputs);
                     }
                 }
         })  
@@ -70,21 +69,35 @@ export default class SavedOutput extends React.Component {
     render() {
         const date_options = []
         for (const [index, value] of this.state.date_list.entries()) {
-            date_options.push(<option value={index} key={index}>{value._id}</option>)
+            date_options.push(<option value={value._id} key={index}>{value._id}</option>)
+        };
+        const handleDateChange = e => {
+            this.setState({selected_date: e.target.value});
+            axios.get(sprintf.vsprintf(OUTPUT_URL, [e.target.value]))
+                .then(res => {
+                    const data = res.data;
+                    if (data) {
+                        if (data.success) {
+                            this.setState({data: data.data.outputs});
+                        }
+                    }
+                })
         }
+
         return (
-            <div>
+            <div className="animated fadeIn">
                 <Row>
                     <Col xs="12" md="6">
                         <Card>
                         <CardHeader>
-                            <strong>Basic Form</strong> Elements
+                            <i className="icon-calendar"> </i>
+                            Select Date
                         </CardHeader>
                         <CardBody>
                             <FormGroup row>
                                 <Col md="12">
                                     <Label htmlFor="select">Select Date</Label>
-                                    <Input type="select" name="select" id="select" onChange={e => this.setState({selected_date: e.target.value})}>
+                                    <Input type="select" name="select" id="select" onChange={e=>handleDateChange(e)}>
                                         <option value="0">Please select</option>
                                         {date_options}
                                     </Input>

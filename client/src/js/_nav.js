@@ -17,7 +17,7 @@ export default {
     {
       name: 'Calculator',
       url: '/mainflow',
-      icon: 'icon-drop',
+      icon: 'icon-calculator',
     },
     {
       title: true,
@@ -50,12 +50,12 @@ export default {
     {
       name: 'Usage',
       url: '/usage',
-      icon: 'icon-shuffle',
+      icon: 'icon-tag',
     },
     {
       name: 'Saved Output',
       url: '/savedoutput',
-      icon: 'icon-shuffle',
+      icon: 'icon-calendar',
     }
   ],
 };
