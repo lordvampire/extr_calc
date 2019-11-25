@@ -3,7 +3,20 @@ import MaterialTable from 'material-table';
 import axios from 'axios';
 import sprintf from 'sprintf-js';
 import {
-    OUTPUT_URL
+  Button,
+  Card,
+  CardBody,
+  CardFooter,
+  CardHeader,
+  Col,
+  FormGroup,
+  Input,
+  Label,
+  Row,
+} from 'reactstrap';
+import {
+    OUTPUT_URL, 
+    OUTPUT_DATE_URL
 } from '../../../../constants/ApiConstants';
 
 export default class SavedOutput extends React.Component {
@@ -35,32 +48,64 @@ export default class SavedOutput extends React.Component {
                 { title: 'VP ExtMargin', field: 'extrusion_margin', type: 'numeric' },
                 { title: 'Saved Date', field: 'timestamp' }
             ],
-            data: []        
+            data: [],   
+            date_list: [],
+            selected_date: ''     
         }
     };
 
     componentWillMount() {
-        axios.get(OUTPUT_URL)
+        axios.get(OUTPUT_DATE_URL)
             .then(res => {
                 const data = res.data;
                 if (data) {
                     if (data.success) {
-                        this.setState({data: data.data.outputs})
+                        this.setState({date_list: data.data.outputs})
+                        console.log(data.data.outputs);
                     }
                 }
         })  
     };
 
     render() {
+        const date_options = []
+        for (const [index, value] of this.state.date_list.entries()) {
+            date_options.push(<option value={index} key={index}>{value._id}</option>)
+        }
         return (
-            <MaterialTable
-                title="SAVED OUTPUT TABLE"
-                columns={this.state.columns}
-                data={this.state.data}        
-                options={{
-                    filtering: true
-                }}
-            />
+            <div>
+                <Row>
+                    <Col xs="12" md="6">
+                        <Card>
+                        <CardHeader>
+                            <strong>Basic Form</strong> Elements
+                        </CardHeader>
+                        <CardBody>
+                            <FormGroup row>
+                                <Col md="12">
+                                    <Label htmlFor="select">Select Date</Label>
+                                    <Input type="select" name="select" id="select" onChange={e => this.setState({selected_date: e.target.value})}>
+                                        <option value="0">Please select</option>
+                                        {date_options}
+                                    </Input>
+                                </Col>
+                            </FormGroup>
+                        </CardBody>
+                        <CardFooter>
+                            <Button type="submit" size="sm" color="primary"><i className="fa fa-dot-circle-o"></i> Show</Button>
+                        </CardFooter>
+                        </Card>
+                    </Col>
+                </Row>
+                <MaterialTable
+                    title="SAVED OUTPUT TABLE"
+                    columns={this.state.columns}
+                    data={this.state.data}        
+                    options={{
+                        filtering: true
+                    }}
+                />
+            </div>
         );
     }
 }

@@ -15,7 +15,7 @@ import {
     SURFACE_URL,
     COMPLEXITY_URL,
     PRESS_URL,
-    WRITE_OUTPUT_URL
+    USAGE_URL
 } from '../../../constants/ApiConstants'
 
 const initialState = {
@@ -23,6 +23,7 @@ const initialState = {
     alloys: [],
     surfaces: [],
     complexities: [],
+    usages: [],
     current_state: {
         cur_customer: '',
         cur_weight: '',
@@ -33,7 +34,7 @@ const initialState = {
         cur_alloy: '0',
         cur_surface: '0',
         cur_length: '',
-        cur_usage: ''
+        cur_usage: '0'
     },
     errors: {
         profile_width: '',
@@ -93,6 +94,16 @@ export default class MainFlow extends React.Component {
                 }
         })
 
+        axios.get(USAGE_URL)
+            .then(res => {
+                const data = res.data;
+                if (data) {
+                    if (data.success) {
+                        this.setState({usages: data.data.usages})
+                    }
+                }
+        })
+
         axios.get(PRESS_URL)
             .then(res => {
                 const data = res.data;
@@ -103,7 +114,7 @@ export default class MainFlow extends React.Component {
                         this.all_press = data.data.press_data;
                     }
                 }
-            })
+        })
     };
 
         
@@ -120,78 +131,102 @@ export default class MainFlow extends React.Component {
                 let sub_result = {};
                 let number_of_cavity = 0;
                 let ratio_extrusion_min = press.ratio_extrusion_min;
+                console.log("ratio_extrusion_min", ratio_extrusion_min);
                 let ratio_extrusion_max = press.ratio_extrusion_max;
+                console.log("ratio_extrusion_max", ratio_extrusion_max);
 
-                let weight_billet1m = Math.pow(press.billet_dia, 2) * Math.PI / 4 * this.state.alloys[parseInt(profile.cur_alloy, 10)].Rho;
-                let weight_billet1m_compressed = Math.pow(press.container_dia, 2) * Math.PI / 4 * this.state.alloys[parseInt(profile.cur_alloy, 10)].Rho;
+                let weight_billet1m = Math.pow(press.billet_dia, 2) * Math.PI / 4 * this.state.alloys[parseInt(profile.cur_alloy, 10)].Rho / 1000;
+                console.log("weight_billet1m", weight_billet1m);
+                let weight_billet1m_compressed = Math.pow(press.container_dia, 2) * Math.PI / 4 * this.state.alloys[parseInt(profile.cur_alloy, 10)].Rho / 1000;
+                console.log("weight_billet1m_compressed", weight_billet1m_compressed);
                 let axdisatance = press.container_dia * 0.1;
-                let usable_dia = press.container_dia * press.value_spreading;
+                console.log("axdisatance", axdisatance);
+                let usable_dia = press.container_dia * (100 + press.value_spreading) / 100;
+                console.log("usable_dia", usable_dia);
                 let cimcumscribing_profile = Math.sqrt(Math.pow(parseInt(profile.cur_width, 10), 2) + Math.pow(parseInt(profile.cur_height, 10), 2));
-                let extratio_profile = weight_billet1m / parseInt(profile.cur_weight, 10);
-                let max_height_2cav = Math.sqrt(Math.pow((press.container_dia/2), 2) - Math.pow((parseInt(profile.cur_height, 10)/2), 2)) - axdisatance;
-                let max_height_4cav = Math.sqrt(Math.pow((usable_dia/2), 2) - Math.pow(parseInt(profile.cur_height, 10)+axdisatance, 2)) - axdisatance;
-                let max_cs_6cav = usable_dia / 3;
-                let max_cs_8cav = Math.sin(Math.PI / 4);
-
-                console.log("press.max_profile_width", press.max_profile_width);
-                console.log("profile.cur_width", profile.cur_width);
                 console.log("cimcumscribing_profile", cimcumscribing_profile);
+                let extratio_profile = weight_billet1m_compressed / parseInt(profile.cur_weight, 10);
+                console.log("extratio_profile", extratio_profile);
+                let max_height_2cav = Math.sqrt(Math.pow((press.container_dia/2), 2) - Math.pow((parseInt(profile.cur_height, 10)/2), 2)) - axdisatance;
+                console.log("max_height_2cav", max_height_2cav);
+                let max_height_4cav = Math.sqrt(Math.pow((usable_dia/2), 2) - Math.pow(parseInt(profile.cur_height, 10)+axdisatance, 2)) - axdisatance;
+                console.log("max_height_4cav", max_height_4cav);
+                let max_cs_6cav = usable_dia / 3;
+                console.log("max_cs_6cav", max_cs_6cav);
+                let max_cs_8cav = Math.sin(Math.PI / 4) * usable_dia / 4;
+                console.log("max_cs_8cav", max_cs_8cav);
                 
-                if (press.max_profile_width > parseInt(profile.cur_width, 10)) number_of_cavity = 1;
+                if (press.max_profile_width < parseInt(profile.cur_width, 10)) number_of_cavity = 0;
                 else if ((cimcumscribing_profile < (max_cs_8cav - axdisatance)) && 
-                        (ratio_extrusion_min < (extratio_profile/8)) && 
-                        ((extratio_profile/8) < ratio_extrusion_max))
+                        (ratio_extrusion_min < (extratio_profile/6)) && 
+                        ((extratio_profile/6) < ratio_extrusion_max))
                     number_of_cavity = 8;
                 else if ((cimcumscribing_profile < (max_cs_6cav - axdisatance)) && 
                         (ratio_extrusion_min < (extratio_profile/6)) && 
                         ((extratio_profile/6) < ratio_extrusion_max)) 
                     number_of_cavity = 6;
-                else if (parseInt(profile.cur_width, 10) < max_height_4cav || 
-                        (cimcumscribing_profile < (usable_dia/2-axdisatance) && 
+                else if ((parseInt(profile.cur_width, 10) < max_height_4cav || 
+                        (cimcumscribing_profile < (usable_dia/2-axdisatance))) && 
                         (ratio_extrusion_min < (extratio_profile/4)) &&
-                        ((extratio_profile/4) < ratio_extrusion_max)))
+                        ((extratio_profile/4) < ratio_extrusion_max))
                     number_of_cavity = 4;
-                else if (parseInt(profile.cur_width, 10) < max_height_2cav || 
-                        (cimcumscribing_profile < (usable_dia/2-axdisatance/2) && 
+                else if ((parseInt(profile.cur_width, 10) < max_height_2cav || 
+                        (cimcumscribing_profile < (usable_dia/2-axdisatance/2))) && 
                         (ratio_extrusion_min < (extratio_profile/2)) &&
-                        ((extratio_profile/2) < ratio_extrusion_max)))
+                        ((extratio_profile/2) < ratio_extrusion_max))
                     number_of_cavity = 2;
                 else if ((cimcumscribing_profile < usable_dia) &&
                         (ratio_extrusion_min < extratio_profile) &&
                         (extratio_profile < ratio_extrusion_max))
                     number_of_cavity = 1;
                 else
-                    number_of_cavity = 1;
+                    number_of_cavity = 0;
+
+                console.log("number_of_cavity", number_of_cavity);
 
                 // extruction Speed Auto
                 let ramspeed = press.ram_speed_max * this.state.alloys[parseInt(profile.cur_alloy, 10)].extru * this.state.surfaces[parseInt(profile.cur_surface, 10)].extru * this.state.complexities[parseInt(profile.cur_complexity, 10)].extru;
+                console.log("ramspeed", ramspeed);
 
                 //scrap length Auto
-                let length_scrap = 0;
-                let length_buttend = 0;
-                let length_cooltable = 0;
+                let length_scrap = 4;
+                let length_buttend = 40;
 
                 // Billet length
                 let volume_rate_container_billet = Math.pow(press.container_dia, 2) / Math.pow(press.billet_dia, 2);
-                let ratio_extruction = weight_billet1m / parseInt(profile.cur_weight, 10) / number_of_cavity;
-                let max_producable_length = ((press.container_length/volume_rate_container_billet)-length_buttend) / ratio_extruction;
-                let max_producable_costlen = (max_producable_length - length_scrap) / parseInt(profile.cur_length, 10);
-                let max_producable_cl_table = (length_cooltable - length_scrap) / parseInt(profile.cur_length, 10);
+                console.log("volume_rate_container_billet", volume_rate_container_billet);
+                let ratio_extruction = weight_billet1m_compressed / parseInt(profile.cur_weight, 10) / number_of_cavity;
+                console.log("ratio_extruction", ratio_extruction);
+                let max_producable_length = ((press.billet_length_max/volume_rate_container_billet)-length_buttend) * ratio_extruction / 1000;
+                console.log("max_producable_length", max_producable_length);
+                let max_producable_costlen = Math.floor((max_producable_length - length_scrap) / parseInt(profile.cur_length, 10) * 1000);
+                console.log("max_producable_costlen", max_producable_costlen);
+                let max_producable_cl_table = Math.floor((press.table_length_max - length_scrap) / parseInt(profile.cur_length, 10) * 1000);
+                console.log("max_producable_cl_table", max_producable_cl_table);
                 let number_costumer_length = Math.min(max_producable_cl_table, max_producable_costlen)
+                console.log("number_costumer_length", number_costumer_length);
                 let weight_number_cslength = number_costumer_length * (parseInt(profile.cur_length, 10)/1000) * parseInt(profile.cur_weight, 10);
+                console.log("weight_number_cslength", weight_number_cslength);
                 let weight_buttend = length_buttend * weight_billet1m_compressed / 1000;
-                let weight_billetlength = weight_number_cslength + weight_buttend;
-                let length_billet = weight_billetlength / weight_billet1m * 1000;
-                let length_billet_compressed = length_billet / volume_rate_container_billet;
+                console.log("weight_buttend", weight_buttend);
+                let weight_scrap = (length_scrap * parseInt(profile.cur_weight, 10));
+                console.log("weight_scrap", weight_scrap);
+                let weight_billetlength = (weight_number_cslength + weight_scrap) * number_of_cavity + weight_buttend;
+                console.log("weight_billetlength", weight_billetlength);
+                let length_billet = Math.ceil(weight_billetlength / weight_billet1m * 1000 + 0.5);
+                console.log("length_billet", length_billet);
+                let length_billet_compressed = Math.ceil(length_billet / volume_rate_container_billet + 0.5);
+                console.log("length_billet_compressed", length_billet_compressed);
 
                 // productivity
-                let time_extrusion_billet = length_billet_compressed / ramspeed;
+                let time_extrusion_billet = (length_billet_compressed - length_buttend) / ramspeed;
+                console.log("time_extrusion_billet", time_extrusion_billet);
                 let time_process = time_extrusion_billet + press.dead_cycle;     
-                let net_productivity = weight_number_cslength / time_process * 3600;
+                console.log("time_process", time_process);
+                let net_productivity = weight_number_cslength * number_of_cavity / time_process * 3600;
+                console.log("net_productivity", net_productivity);
                 let gros_productivity = weight_billetlength / time_process * 3600;
-                
-                console.log("length_billet", length_billet);
-                console.log("number_costumer_length", number_costumer_length);
+                console.log("gros_productivity", gros_productivity);
 
                 let today = new Date();
                 let date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
@@ -206,14 +241,11 @@ export default class MainFlow extends React.Component {
                     'billet_length': length_billet,
                     'buttend_length': length_buttend,
                     'scrap_length': length_scrap,
-                    // 'num_costumer_length': number_costumer_length,
-                    'num_costumer_length': 123,
+                    'num_costumer_length': number_costumer_length,
                     'extrusion_length': 0,
                     'puller_speed': 0,
-                    // 'gros_productivity': gros_productivity,
-                    'gros_productivity': 234,
-                    // 'net_productivity': net_productivity,
-                    'net_productivity': 127,
+                    'gros_productivity': gros_productivity,
+                    'net_productivity': net_productivity,
                     'recovery': 0,
                     'logend_recovery': 0,
                     'area_cost': 0,
@@ -247,6 +279,7 @@ export default class MainFlow extends React.Component {
         const alloy_options = []
         const surface_options = []
         const complexity_options = []
+        const usage_options = []
 
         for (const [index, value] of this.state.profile_types.entries()) {
             profile_type_options.push(<option value={index} key={index}>{value.type_name}</option>)
@@ -261,6 +294,9 @@ export default class MainFlow extends React.Component {
         }
         for (const [index, value] of this.state.complexities.entries()) {
             complexity_options.push(<option value={index} key={index}>{value.name}</option>)
+        }
+        for (const [index, value] of this.state.usages.entries()) {
+            usage_options.push(<option value={index} key={index}>{value.name}</option>)
         }
 
         const update_state = (nestedIndex, e) => {
@@ -407,13 +443,9 @@ export default class MainFlow extends React.Component {
                                     </Col>
                                     <Col md="6">
                                         <Label for="profile_usage">Anwendung</Label>
-                                        <InputGroup>
-                                            <Input name="profile_usage" id="profile_usage" 
-                                                    placeholder="Anwendung" onChange={e => { handleChange(e); this.setState({cur_usage: update_state('cur_usage', e)})}}/>
-                                            <InputGroupAddon addonType="append">[mm] (0....10^6)</InputGroupAddon>
-                                        </InputGroup>
-                                        {errors.profile_usage.length > 0 && 
-                                        <Alert color='danger'>{errors.profile_usage}</Alert>}
+                                        <Input type="select" name="select" id="profile_usage" onChange={e => this.setState({cur_usage: update_state('cur_usage', e)})}>
+                                            {usage_options}
+                                        </Input>
                                     </Col>
                                 </FormGroup>
                                 <Button color="info" className="mr-2 mb-2" onClick={this.clearProfile}>Clear</Button>

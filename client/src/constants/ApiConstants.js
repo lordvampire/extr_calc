@@ -34,4 +34,5 @@ export const UPDATE_USAGE_URL = constructUrl('/usage/update/%s');
 export const DELETE_USAGE_URL = constructUrl('/usage/delete/%s');
 
 export const WRITE_OUTPUT_URL = constructUrl('/output');
-export const OUTPUT_URL = constructUrl('/output');
+export const OUTPUT_URL = constructUrl('/output/output/%s');
+export const OUTPUT_DATE_URL = constructUrl('/output/date')

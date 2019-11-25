@@ -26,4 +26,14 @@ app.get('/output/:date', (req, res) => {
             response.failure(res, err);
         });
 });
+
+app.get('/date', (req, res) => {
+    Output.listAll()
+        .then((data) => {
+            response.success(res, { outputs: data });
+        })
+        .catch(err => {
+            response.failure(res, err);
+        });
+})
 module.exports = app;

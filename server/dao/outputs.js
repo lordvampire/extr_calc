@@ -27,4 +27,23 @@ Output.list = (date) => {
   });
 };
 
+Output.listAll = () => {
+  return new Promise((resolve, reject) => {
+    Output.aggregate([
+      {
+        $group: {
+          _id: '$timestamp',
+          count: { $sum:1 }
+        }
+      }
+    ], (err, output) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(output);
+      }
+    })
+  });
+};
+
 module.exports = Output;
