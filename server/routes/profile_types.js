@@ -1,11 +1,11 @@
 var express = require('express');
-var ProfileTypes = require('../dao/profile_types');
+var ProfileType = require('../dao/profile_types');
 var response = require('../util/response');
 
 const app = express();
 
 app.get('/profile_types', (req, res) => {
-    ProfileTypes.list()
+    ProfileType.list()
         .then((data) => {
             response.success(res, { types: data });
         })

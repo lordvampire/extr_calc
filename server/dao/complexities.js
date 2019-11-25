@@ -1,4 +1,4 @@
-var Complexity = require('../models/Complexities');
+var Complexity = require('../models/Complexity');
 
 Complexity.list = () => {
   return new Promise((resolve, reject) => {

@@ -14,10 +14,10 @@ export default class Alloy extends React.Component {
         super();
         this.state = {
             columns: [
-                { title: 'Name', field: 'name' },
-                { title: 'Extrudability', field: 'extru' },
-                { title: 'Length', field: 'length', type: 'numeric' },
-                { title: 'Rho', field: 'Rho'}
+                { title: 'Name', field: 'name', headerStyle: {width: '20%',  textAlign:'center'}, cellStyle: {width: '20%',  textAlign:'center'} },
+                { title: 'Extrudability', field: 'extru', headerStyle: {width: '30%', textAlign:'center'}, cellStyle: {width: '20%',  textAlign:'center'} },
+                { title: 'Length', field: 'length', type: 'numeric', headerStyle: {width: '30%', textAlign:'center'}, cellStyle: {width: '20%',  textAlign:'center'} },
+                { title: 'Rho', field: 'Rho', headerStyle: {width: '20%', textAlign:'center'}, cellStyle: {width: '20%',  textAlign:'center'}},
               ],
             data: []        
         }
@@ -46,17 +46,17 @@ export default class Alloy extends React.Component {
                         new Promise(resolve => {
                             setTimeout(() => {
                             resolve();
-                            this.setState(prevState => {
-                                const data = [...prevState.data];
-                                data.push(newData);
-                                return { ...prevState, data };
-                            });
                             axios.post(CREATE_ALLOY_URL, newData)
                             .then(res => {
                                 const dat = res.data;
                                 if (dat) {
                                     if (dat.success) {
                                         console.log('success');
+                                        this.setState(prevState => {
+                                            const data = [...prevState.data];
+                                            data.push(newData);
+                                            return { ...prevState, data };
+                                        });
                                     } else {
                                         console.log('failure');
                                     }
@@ -69,11 +69,6 @@ export default class Alloy extends React.Component {
                             setTimeout(() => {
                             resolve();
                             if (oldData) {
-                                this.setState(prevState => {
-                                    const data = [...prevState.data];
-                                    data[data.indexOf(oldData)] = newData;
-                                    return { ...prevState, data };
-                                });
                                 
                                 axios.put(sprintf.vsprintf(UPDATE_ALLOY_URL, [oldData.name]), newData)
                                 .then(res => {
@@ -81,6 +76,11 @@ export default class Alloy extends React.Component {
                                     if (dat) {
                                         if (dat.success) {
                                             console.log('success');
+                                            this.setState(prevState => {
+                                                const data = [...prevState.data];
+                                                data[data.indexOf(oldData)] = newData;
+                                                return { ...prevState, data };
+                                            });
                                         } else {
                                             console.log('failure');
                                         }

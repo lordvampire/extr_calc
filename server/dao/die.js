@@ -1,8 +1,8 @@
-var TableDies = require('../models/Dies');
+var TableDie = require('../models/Die');
 
-TableDies.list = () => {
+TableDie.list = () => {
   return new Promise((resolve, reject) => {
-    TableDies.find((err, types) => {
+    TableDie.find((err, types) => {
       if (err) {
         reject(err);
       } else {
@@ -12,4 +12,4 @@ TableDies.list = () => {
   });
 };
 
-module.exports = TableDies;
+module.exports = TableDie;

@@ -27,3 +27,11 @@ export const PRESS_URL = constructUrl('/press/press');
 export const CREATE_PRESS_URL = constructUrl('/press');
 export const UPDATE_PRESS_URL = constructUrl('/press/update/%s');
 export const DELETE_PRESS_URL = constructUrl('/press/delete/%s');
+
+export const USAGE_URL = constructUrl('/usage/usage');
+export const CREATE_USAGE_URL = constructUrl('/usage');
+export const UPDATE_USAGE_URL = constructUrl('/usage/update/%s');
+export const DELETE_USAGE_URL = constructUrl('/usage/delete/%s');
+
+export const WRITE_OUTPUT_URL = constructUrl('/output');
+export const OUTPUT_URL = constructUrl('/output');

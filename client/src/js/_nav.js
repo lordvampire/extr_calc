@@ -46,6 +46,16 @@ export default {
       name: 'Complexity',
       url: '/complexity',
       icon: 'icon-shuffle',
+    },
+    {
+      name: 'Usage',
+      url: '/usage',
+      icon: 'icon-shuffle',
+    },
+    {
+      name: 'Saved Output',
+      url: '/savedoutput',
+      icon: 'icon-shuffle',
     }
   ],
 };

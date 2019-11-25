@@ -3,31 +3,31 @@ import MaterialTable from 'material-table';
 import axios from 'axios';
 import sprintf from 'sprintf-js';
 import {
-    SURFACE_URL,
-    CREATE_SURFACE_URL,
-    UPDATE_SURFACE_URL,
-    DELETE_SURFACE_URL
+    USAGE_URL,
+    CREATE_USAGE_URL,
+    UPDATE_USAGE_URL,
+    DELETE_USAGE_URL
 } from '../../../../constants/ApiConstants';
 
-export default class Surface extends React.Component {
+export default class USAGE extends React.Component {
     constructor() {
         super();
         this.state = {
             columns: [
                 { title: 'Name', field: 'name', headerStyle: {width: '50%',  textAlign:'center'}, cellStyle: {width: '50%',  textAlign:'center'}  },
-                { title: 'Extrudability', field: 'extru', headerStyle: {width: '50%',  textAlign:'center'}, cellStyle: {width: '50%',  textAlign:'center'}  }
+                { title: 'Logrec_calc', field: 'logrec_calc', headerStyle: {width: '50%',  textAlign:'center'}, cellStyle: {width: '50%',  textAlign:'center'}  }
               ],
             data: []        
         }
     };
 
     componentWillMount() {
-        axios.get(SURFACE_URL)
+        axios.get(USAGE_URL)
             .then(res => {
                 const data = res.data;
                 if (data) {
                     if (data.success) {
-                        this.setState({data: data.data.surfaces})
+                        this.setState({data: data.data.usages})
                     }
                 }
         })  
@@ -36,7 +36,7 @@ export default class Surface extends React.Component {
     render() {
         return (
             <MaterialTable
-                title="SURFACE TABLE"
+                title="USAGE TABLE"
                 columns={this.state.columns}
                 data={this.state.data}
                 editable={{
@@ -45,12 +45,13 @@ export default class Surface extends React.Component {
                             setTimeout(() => {
                             resolve();
 
-                            axios.post(CREATE_SURFACE_URL, newData)
+                            axios.post(CREATE_USAGE_URL, newData)
                             .then(res => {
                                 const dat = res.data;
                                 if (dat) {
                                     if (dat.success) {
                                         console.log('success');
+                                        
                                         this.setState(prevState => {
                                             const data = [...prevState.data];
                                             data.push(newData);
@@ -69,12 +70,13 @@ export default class Surface extends React.Component {
                             resolve();
                             if (oldData) {
                                 
-                                axios.put(sprintf.vsprintf(UPDATE_SURFACE_URL, [oldData.name]), newData)
+                                axios.put(sprintf.vsprintf(UPDATE_USAGE_URL, [oldData.name]), newData)
                                 .then(res => {
                                     const dat = res.data;
                                     if (dat) {
                                         if (dat.success) {
                                             console.log('success');
+                                            
                                             this.setState(prevState => {
                                                 const data = [...prevState.data];
                                                 data[data.indexOf(oldData)] = newData;
@@ -98,7 +100,7 @@ export default class Surface extends React.Component {
                                 return { ...prevState, data };
                             });
                             
-                            axios.delete(sprintf.vsprintf(DELETE_SURFACE_URL, [oldData.name]))
+                            axios.delete(sprintf.vsprintf(DELETE_USAGE_URL, [oldData.name]))
                             .then(res => {
                                 const dat = res.data;
                                 if (dat) {

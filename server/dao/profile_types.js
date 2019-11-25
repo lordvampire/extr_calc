@@ -1,8 +1,8 @@
-var ProfileTypes = require('../models/ProfileTypes');
+var ProfileType = require('../models/ProfileType');
 
-ProfileTypes.list = () => {
+ProfileType.list = () => {
   return new Promise((resolve, reject) => {
-    ProfileTypes.find((err, types) => {
+    ProfileType.find((err, types) => {
       if (err) {
         reject(err);
       } else {
@@ -12,4 +12,4 @@ ProfileTypes.list = () => {
   });
 };
 
-module.exports = ProfileTypes;
+module.exports = ProfileType;

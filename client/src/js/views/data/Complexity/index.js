@@ -14,8 +14,8 @@ export default class Complexity extends React.Component {
         super();
         this.state = {
             columns: [
-                { title: 'Name', field: 'name' },
-                { title: 'Extrudability', field: 'extru' }
+                { title: 'Name', field: 'name', headerStyle: {width: '50%',  textAlign:'center'}, cellStyle: {width: '50%',  textAlign:'center'}  },
+                { title: 'Extrudability', field: 'extru', headerStyle: {width: '50%',  textAlign:'center'}, cellStyle: {width: '50%',  textAlign:'center'}  }
               ],
             data: []        
         }
@@ -44,11 +44,6 @@ export default class Complexity extends React.Component {
                         new Promise(resolve => {
                             setTimeout(() => {
                             resolve();
-                            this.setState(prevState => {
-                                const data = [...prevState.data];
-                                data.push(newData);
-                                return { ...prevState, data };
-                            });
 
                             axios.post(CREATE_COMPLEXITY_URL, newData)
                             .then(res => {
@@ -56,6 +51,11 @@ export default class Complexity extends React.Component {
                                 if (dat) {
                                     if (dat.success) {
                                         console.log('success');
+                                        this.setState(prevState => {
+                                            const data = [...prevState.data];
+                                            data.push(newData);
+                                            return { ...prevState, data };
+                                        });
                                     } else {
                                         console.log('failure');
                                     }
@@ -68,11 +68,6 @@ export default class Complexity extends React.Component {
                             setTimeout(() => {
                             resolve();
                             if (oldData) {
-                                this.setState(prevState => {
-                                    const data = [...prevState.data];
-                                    data[data.indexOf(oldData)] = newData;
-                                    return { ...prevState, data };
-                                });
                                 
                                 axios.put(sprintf.vsprintf(UPDATE_COMPLEXITY_URL, [oldData.name]), newData)
                                 .then(res => {
@@ -80,6 +75,11 @@ export default class Complexity extends React.Component {
                                     if (dat) {
                                         if (dat.success) {
                                             console.log('success');
+                                            this.setState(prevState => {
+                                                const data = [...prevState.data];
+                                                data[data.indexOf(oldData)] = newData;
+                                                return { ...prevState, data };
+                                            });
                                         } else {
                                             console.log('failure');
                                         }

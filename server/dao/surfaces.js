@@ -1,4 +1,4 @@
-var Surface = require('../models/Surfaces');
+var Surface = require('../models/Surface');
 
 Surface.list = () => {
   return new Promise((resolve, reject) => {
@@ -14,7 +14,6 @@ Surface.list = () => {
 
 Surface.create = (newSurface) => {
   let surface = new Surface({...newSurface});
-  console.log(surface)
   return new Promise((resolve, reject) => {
     surface.save((err, surface) => {
       if (err) reject(err);
@@ -29,7 +28,6 @@ Surface.update = (name, newSurface) => {
       if(err) {
           reject(err);
       }
-      console.log(surface)
       surface.name = newSurface.name;
       surface.extru = newSurface.extru;
 

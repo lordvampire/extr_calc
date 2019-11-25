@@ -14,22 +14,28 @@ export default class PressData extends React.Component {
         super();
         this.state = {
             columns: [
-                { title: 'Name', field: 'name' },
-                { title: 'Inch', field: 'inch', type: 'numeric' },
-                { title: 'BilletDiameter', field: 'billet_dia', type: 'numeric' },
-                { title: 'ContainerDiameter', field: 'container_dia', type: 'numeric' },
-                { title: 'Billet Lenght max', field: 'billet_length_max', type: 'numeric' },
-                { title: 'Table Lenght max', field: 'table_length_max', type: 'numeric' },
-                { title: 'Ram speed max', field: 'ram_speed_max', type: 'numeric' },
-                { title: 'max Profilbreite', field: 'max_profile_width', type: 'numeric' },
-                { title: 'BilletSprung', field: 'billet_sprung', type: 'numeric' },
-                { title: 'Speed IST', field: 'speedIST', type: 'numeric' },
-                { title: 'DeadCycle', field: 'dead_cycle', type: 'numeric' },
-                { title: 'Max Puller', field: 'max_puller', type: 'numeric' },
-                { title: 'max Strangzahl', field: 'max_strangzahl', type: 'numeric' },
-                { title: 'Rampenverlust', field: 'rampernverlust', type: 'numeric' },
-                { title: 'Log/Billet', field: 'log_billet' },
-                { title: 'Value Spreading', field: 'value_spreading', type: 'numeric' }
+                { title: 'Name', field: 'name', headerStyle: {width: '20%',  textAlign:'center'}, cellStyle: {width: '20%',  textAlign:'center'}  },
+                { title: 'Inch', field: 'inch', type: 'numeric', headerStyle: {width: '20%',  textAlign:'center'}, cellStyle: {width: '20%',  textAlign:'center'}  },
+                { title: 'BilletDiameter', field: 'billet_dia', type: 'numeric', headerStyle: {width: '20%',  textAlign:'center'}, cellStyle: {width: '20%',  textAlign:'center'}  },
+                { title: 'ContainerDiameter', field: 'container_dia', type: 'numeric', headerStyle: {width: '20%',  textAlign:'center'}, cellStyle: {width: '20%',  textAlign:'center'}  },
+                { title: 'Billet Lenght max', field: 'billet_length_max', type: 'numeric', headerStyle: {width: '20%',  textAlign:'center'}, cellStyle: {width: '20%',  textAlign:'center'}  },
+                { title: 'Table Lenght max', field: 'table_length_max', type: 'numeric', headerStyle: {width: '20%',  textAlign:'center'}, cellStyle: {width: '20%',  textAlign:'center'}  },
+                { title: 'Ram speed max', field: 'ram_speed_max', type: 'numeric', headerStyle: {width: '20%',  textAlign:'center'}, cellStyle: {width: '20%',  textAlign:'center'}  },
+                { title: 'max Profilbreite', field: 'max_profile_width', type: 'numeric', headerStyle: {width: '20%',  textAlign:'center'}, cellStyle: {width: '20%',  textAlign:'center'}  },
+                { title: 'BilletSprung', field: 'billet_sprung', type: 'numeric', headerStyle: {width: '20%',  textAlign:'center'}, cellStyle: {width: '20%',  textAlign:'center'}  },
+                { title: 'Speed IST', field: 'speedIST', type: 'numeric', headerStyle: {width: '20%',  textAlign:'center'}, cellStyle: {width: '20%',  textAlign:'center'}  },
+                { title: 'DeadCycle', field: 'dead_cycle', type: 'numeric', headerStyle: {width: '20%',  textAlign:'center'}, cellStyle: {width: '20%',  textAlign:'center'}  },
+                { title: 'Max Puller', field: 'max_puller', type: 'numeric', headerStyle: {width: '20%',  textAlign:'center'}, cellStyle: {width: '20%',  textAlign:'center'}  },
+                { title: 'Max Strangzahl', field: 'max_strangzahl', type: 'numeric', headerStyle: {width: '20%',  textAlign:'center'}, cellStyle: {width: '20%',  textAlign:'center'}  },
+                { title: 'Rampenverlust', field: 'rampernverlust', type: 'numeric', headerStyle: {width: '20%',  textAlign:'center'}, cellStyle: {width: '20%',  textAlign:'center'}  },
+                {
+                  title: 'Log/Billet',
+                  field: 'log_billet',
+                  lookup: { 'log': 'Log', 'billet': 'Billet' },
+                },
+                { title: 'Value Spreading', field: 'value_spreading', type: 'numeric' },
+                { title: 'Min Ratio Extrusion', field: 'ratio_extrusion_min', type: 'numeric'},
+                { title: 'Max Ratio Extrusion', field: 'ratio_extrusion_max', type: 'numeric'}
               ],
             data: []        
         }
@@ -59,18 +65,18 @@ export default class PressData extends React.Component {
                         new Promise(resolve => {
                             setTimeout(() => {
                             resolve();
-                            this.setState(prevState => {
-                                const data = [...prevState.data];
-                                data.push(newData);
-                                console.log(data)
-                                return { ...prevState, data };
-                            });
                             axios.post(CREATE_PRESS_URL, newData)
                             .then(res => {
                                 const dat = res.data;
                                 if (dat) {
                                     if (dat.success) {
                                         console.log('success');
+                                        this.setState(prevState => {
+                                            const data = [...prevState.data];
+                                            data.push(newData);
+                                            console.log(data)
+                                            return { ...prevState, data };
+                                        });
                                     } else {
                                         console.log('failure');
                                     }
@@ -83,11 +89,6 @@ export default class PressData extends React.Component {
                             setTimeout(() => {
                             resolve();
                             if (oldData) {
-                                this.setState(prevState => {
-                                    const data = [...prevState.data];
-                                    data[data.indexOf(oldData)] = newData;
-                                    return { ...prevState, data };
-                                });
                                 
                                 axios.put(sprintf.vsprintf(UPDATE_PRESS_URL, [oldData.name]), newData)
                                 .then(res => {
@@ -95,6 +96,11 @@ export default class PressData extends React.Component {
                                     if (dat) {
                                         if (dat.success) {
                                             console.log('success');
+                                            this.setState(prevState => {
+                                                const data = [...prevState.data];
+                                                data[data.indexOf(oldData)] = newData;
+                                                return { ...prevState, data };
+                                            });
                                         } else {
                                             console.log('failure');
                                         }

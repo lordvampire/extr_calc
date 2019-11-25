@@ -1,4 +1,4 @@
-var Press = require('../models/Presses');
+var Press = require('../models/Press');
 
 Press.list = () => {
   return new Promise((resolve, reject) => {
