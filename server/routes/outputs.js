@@ -17,7 +17,6 @@ app.post('/', (req, res) => {
 });
 
 app.get('/output/:date', (req, res) => {
-    console.log("datae", req.params.date);
     Output.list(req.params.date)
         .then((data) => {
             response.success(res, { outputs: data });
