@@ -6,7 +6,7 @@ const app = express();
 
 app.post('/', (req, res) => {
     let new_output = req.body;
-
+    console.log(new_output)
     Output.create(new_output)
         .then((data) => {
             response.success(res, { outputs: data });
