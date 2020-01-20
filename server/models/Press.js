@@ -19,6 +19,14 @@ const TablePressesSchema = new mongoose.Schema({
   rampernverlust: Number,
   log_billet: String,
   value_spreading: Number,
+  ratio_extru_max: Number,
+  ratio_extru_min: Number,
+  fix_cost_type1: Number,
+  fix_cost_type2: Number,
+  fix_cost_type3: Number,
+  die_typeA_dia: Number,
+  die_typeA_height: Number,
+  remelt_cost: Number,
 });
 
 module.exports = mongoose.model("table_press", TablePressesSchema);

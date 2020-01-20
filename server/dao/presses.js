@@ -47,6 +47,14 @@ Press.update = (name, newPress) => {
       press.rampernverlust = newPress.rampernverlust;
       press.log_billet = newPress.log_billet;
       press.value_spreading = newPress.value_spreading;
+      press.ratio_extru_max = newPress.ratio_extru_max;
+      press.ratio_extru_min = newPress.ratio_extru_min;
+      press.fix_cost_type1 = newPress.fix_cost_type1;
+      press.fix_cost_type2 = newPress.fix_cost_type2;
+      press.fix_cost_type3 = newPress.fix_cost_type3;
+      press.die_typeA_dia = newPress.die_typeA_dia;
+      press.die_typeA_height = newPress.die_typeA_height;
+      press.remelt_cost = newPress.remelt_cost;
 
     //   press = JSON.parse(JSON.stringify(newPress));
 

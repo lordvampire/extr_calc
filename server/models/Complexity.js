@@ -4,7 +4,8 @@ const mongoose = require("mongoose");
 
 const TableComplexitiesSchema = new mongoose.Schema({
   name: String,
-  extru: Number
+  extru: Number,
+  upcharge: Number,
 });
 
 module.exports = mongoose.model("table_complexity", TableComplexitiesSchema);
