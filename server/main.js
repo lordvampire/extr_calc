@@ -17,7 +17,7 @@ const setMiddleware = () => {
 }
 
 const connectMongoDB = () => {
-  const conUrl = "mongodb+srv://zeng:google1987211@cluster0-uve1d.mongodb.net/ExtrCalc?retryWrites=true&w=majority";
+  const conUrl = "mongodb+srv://zeng:LoZ9eq1mywwjwcHm@cluster0-uve1d.mongodb.net/Calculator?retryWrites=true&w=majority";
   mongoose.connect(conUrl, { useNewUrlParser: true, useUnifiedTopology: true }, function (mongooseError) {
     if (mongooseError) {
       console.log(mongooseError);
