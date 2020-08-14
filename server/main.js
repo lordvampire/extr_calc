@@ -1,13 +1,15 @@
-var express = require('express');
-var bodyParser = require('body-parser');
-var config = require('../config');
-var mongoose = require('mongoose');
+const express = require('express');
+const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
+const dotenv = require('dotenv');
+
 var cors = require('./middleware/cors');
 
 var v1 = require('./routes/v1');
 
+dotenv.config();
 const app = express();
-const basePort = 5000;
+const basePort = 3000;
 
 const setMiddleware = () => {
   app.use(cors('*'));
@@ -17,7 +19,7 @@ const setMiddleware = () => {
 }
 
 const connectMongoDB = () => {
-  const conUrl = "mongodb+srv://zeng:LoZ9eq1mywwjwcHm@cluster0-uve1d.mongodb.net/Calculator?retryWrites=true&w=majority";
+  const conUrl = `mongodb+srv://${process.env.MONGODB_USERNAME}:${process.env.MONGODB_PASSWORD}@cluster0-uve1d.mongodb.net/${process.env.MONGODB_DB}?retryWrites=true&w=majority`;
   mongoose.connect(conUrl, { useNewUrlParser: true, useUnifiedTopology: true }, function (mongooseError) {
     if (mongooseError) {
       console.log(mongooseError);
@@ -45,4 +47,4 @@ const startServer = (basePort) => {
   });
 };
 
-startServer(basePort);
+startServer(process.env.SERVER_PORT || basePort);
