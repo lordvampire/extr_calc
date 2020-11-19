@@ -1,4 +1,4 @@
-const API_HOSTNAME = 'http://localhost:5000/calculator/';
+const API_HOSTNAME = 'http://localhost:5050/calculator/';
 const API_VERSION = 'v1';
 
 const constructUrl = url => `${API_HOSTNAME}${API_VERSION}${url}`;
