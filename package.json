@@ -34,7 +34,7 @@
     "express": "4.17.1",
     "file-loader": "4.2.0",
     "font-awesome": "^4.7.0",
-    "html-webpack-plugin": "3.2.0",
+    "html-webpack-plugin": "5.5.0",
     "js-cookie": "^2.2.1",
     "lodash": "4.17.15",
     "material-table": "^1.54.1",
@@ -61,7 +61,7 @@
     "uglifyjs-webpack-plugin": "2.2.0",
     "url-loader": "2.2.0",
     "webpack": "4.41.2",
-    "webpack-cli": "3.3.10"
+    "webpack-cli": "3.3.12"
   },
   "devDependencies": {
     "eslint": "6.6.0",
